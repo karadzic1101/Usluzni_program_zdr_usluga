@@ -18,11 +18,13 @@ public:
 private:
     Ui::Dialog *m_ui;
 
-public:
-    QString promena;
+private slots:
+    void sendToMainWindow1();
+    void sendToMainWindow2();
+    void sendToMainWindow3();
 
 signals:
-    void sendToMainWindow(QString pr);
+    void sendChange(QString, int);
 };
 
 #endif // DIALOG_H

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "dialog.h"
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->zdr_usl2, SIGNAL(clicked()), this, SLOT(zdr_usluga2()));
     connect(ui->zdr_usl3, SIGNAL(clicked()), this, SLOT(zdr_usluga3()));
     connect(ui->btn_promena, SIGNAL(clicked()), this, SLOT(promena()));
-    connect(m_ui->promena, SIGNAL(sentToMainWindow(QString)), ui, SLOT(receiveChange(QString)));
+    connect(ui->btn_close, SIGNAL(clicked()), this, SLOT(close()));
 }
 
 void MainWindow::zdr_usluga1()
@@ -44,11 +45,17 @@ void MainWindow::promena()
 {
     m_ui = new Dialog(this);
     m_ui->show();
+    connect(m_ui, SIGNAL(sendChange(QString, int)), this, SLOT(receiveFromDialog(QString, int)));
 }
 
-void MainWindow::receiveChange(QString pr)
+void MainWindow::receiveFromDialog(QString pr, int br)
 {
-    ui->zdr_usl1->setText(pr);
+    if (br == 1)
+        ui->zdr_usl1->setText(pr);
+    else if (br == 2)
+        ui->zdr_usl2->setText(pr);
+    else if (br == 3)
+        ui->zdr_usl3->setText(pr);
 }
 
 MainWindow::~MainWindow()

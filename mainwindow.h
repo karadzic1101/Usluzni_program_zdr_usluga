@@ -24,7 +24,7 @@ private slots:
    void zdr_usluga2();
    void zdr_usluga3();
    void promena();
-   void receiveChange(QString pr);
+   void receiveFromDialog(QString, int);
 };
 
 #endif // MAINWINDOW_H
