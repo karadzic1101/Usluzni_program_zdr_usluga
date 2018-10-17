@@ -15,16 +15,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
 public:
     Ui::MainWindow *ui;
     Dialog *m_ui;
 private slots:
-   void zdr_usluga1();
-   void zdr_usluga2();
-   void zdr_usluga3();
    void promena();
-   void receiveFromDialog(QString, int);
+   void ok_funkcija();
+   void reset_funkcija();
+   void receiveFromDialog(QList<QString>);
 };
 
 #endif // MAINWINDOW_H

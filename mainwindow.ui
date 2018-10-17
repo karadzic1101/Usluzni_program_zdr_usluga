@@ -27,45 +27,6 @@
      <string>Maticni broj</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="zdr_usl1">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>80</y>
-      <width>161</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>zdravstvena usluga 1</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="zdr_usl2">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>120</y>
-      <width>161</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>zdravstvena usluga 2</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="zdr_usl3">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>160</y>
-      <width>161</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>zdravstvena usluga 3</string>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="jmbg">
     <property name="geometry">
      <rect>
@@ -76,49 +37,13 @@
      </rect>
     </property>
    </widget>
-   <widget class="QCalendarWidget" name="calendarWidget">
+   <widget class="QLabel" name="lbl_zdr">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>0</y>
-      <width>451</width>
-      <height>221</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbl_zdr1">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>80</y>
-      <width>141</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbl_zdr2">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>120</y>
-      <width>121</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbl_zdr3">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>160</y>
-      <width>121</width>
-      <height>20</height>
+      <x>40</x>
+      <y>90</y>
+      <width>321</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -151,6 +76,42 @@
      <string>Zatvori</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="zdr_usluge">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>20</y>
+      <width>201</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_ok">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>210</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>OK</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_reset">
+    <property name="geometry">
+     <rect>
+      <x>118</x>
+      <y>210</y>
+      <width>101</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ponistavanje</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -158,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>889</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

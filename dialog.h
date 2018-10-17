@@ -17,14 +17,14 @@ public:
 
 private:
     Ui::Dialog *m_ui;
+    QList<QString> list;
 
 private slots:
-    void sendToMainWindow1();
-    void sendToMainWindow2();
-    void sendToMainWindow3();
+    void sendToMainWindow();
+    void closeAndSend();
 
 signals:
-    void sendChange(QString, int);
+    void sendChange(QList<QString>);
 };
 
 #endif // DIALOG_H
