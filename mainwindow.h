@@ -22,7 +22,8 @@ private slots:
    void promena();
    void ok_funkcija();
    void reset_funkcija();
-   void receiveFromDialog(QList<QString>);
+   void reset_odeljenja();
+   void receiveFromDialog(QList<QString>, QList<QString>);
 };
 
 #endif // MAINWINDOW_H

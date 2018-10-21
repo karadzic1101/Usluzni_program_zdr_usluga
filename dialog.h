@@ -18,13 +18,14 @@ public:
 private:
     Ui::Dialog *m_ui;
     QList<QString> list;
+    QList<QString> odeljenje;
 
 private slots:
     void sendToMainWindow();
     void closeAndSend();
 
 signals:
-    void sendChange(QList<QString>);
+    void sendChange(QList<QString>, QList<QString>);
 };
 
 #endif // DIALOG_H
