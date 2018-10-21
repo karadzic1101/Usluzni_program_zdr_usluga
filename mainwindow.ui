@@ -38,7 +38,7 @@
     <item row="0" column="0">
      <widget class="QLabel" name="lbl_jmbg">
       <property name="text">
-       <string>Maticni broj</string>
+       <string>Maticni broj pacijenta</string>
       </property>
      </widget>
     </item>
