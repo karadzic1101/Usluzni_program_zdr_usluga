@@ -23,6 +23,7 @@ private slots:
    void ok_funkcija();
    void reset_funkcija();
    void reset_odeljenja();
+   void close_and_save();
    void receiveFromDialog(QList<QString>, QList<QString>);
 };
 
