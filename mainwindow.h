@@ -15,6 +15,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+private:
+    void initialise_enviroment();
 public:
     Ui::MainWindow *ui;
     Dialog *m_ui;
@@ -23,7 +25,6 @@ private slots:
    void ok_funkcija();
    void reset_funkcija();
    void reset_odeljenja();
-   void close_and_save();
    void receiveFromDialog(QList<QString>, QList<QString>);
 };
 

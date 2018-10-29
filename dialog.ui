@@ -36,10 +36,10 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="zdr_usl"/>
+    <widget class="QLineEdit" name="el_usluga"/>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="le_odeljenje"/>
+    <widget class="QLineEdit" name="el_odeljenje"/>
    </item>
   </layout>
  </widget>

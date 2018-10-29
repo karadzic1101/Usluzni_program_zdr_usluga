@@ -17,8 +17,8 @@ public:
 
 private:
     Ui::Dialog *m_ui;
-    QList<QString> list;
-    QList<QString> odeljenje;
+    QList<QString> lista_usluga;
+    QList<QString> lista_odeljenja;
 
 private slots:
     void sendToMainWindow();

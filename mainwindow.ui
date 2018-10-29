@@ -15,8 +15,39 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="4" column="1" colspan="3">
-     <widget class="QComboBox" name="cb_zdr_odeljenje"/>
+    <item row="1" column="1" colspan="3">
+     <widget class="QComboBox" name="zdr_usluge"/>
+    </item>
+    <item row="6" column="0" colspan="3">
+     <widget class="QLabel" name="lbl_zdr">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="2" colspan="2">
+     <widget class="QPushButton" name="btn_promena">
+      <property name="text">
+       <string>Promena</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Zdravstvena usluga</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="5">
+     <widget class="QPushButton" name="btn_close">
+      <property name="text">
+       <string>Zatvori</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" colspan="3">
+     <widget class="QLineEdit" name="lE_zdr_rad"/>
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="label">
@@ -25,13 +56,13 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1" colspan="3">
-     <widget class="QLineEdit" name="jmbg"/>
+    <item row="4" column="1" colspan="3">
+     <widget class="QComboBox" name="cb_zdr_odeljenje"/>
     </item>
-    <item row="9" column="5">
-     <widget class="QPushButton" name="btn_close">
+    <item row="9" column="1">
+     <widget class="QPushButton" name="btn_izvestaj">
       <property name="text">
-       <string>Zatvori</string>
+       <string>Izvestaj</string>
       </property>
      </widget>
     </item>
@@ -42,23 +73,6 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Zdravstveno odeljenje</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1" colspan="3">
-     <widget class="QComboBox" name="cb_zaposlen"/>
-    </item>
-    <item row="6" column="0" colspan="3">
-     <widget class="QLabel" name="lbl_zdr">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
     <item row="9" column="4">
      <widget class="QPushButton" name="btn_ok">
       <property name="text">
@@ -66,16 +80,23 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="1" colspan="3">
-     <widget class="QLineEdit" name="lE_zdr_rad"/>
+    <item row="3" column="1" colspan="3">
+     <widget class="QComboBox" name="cb_zaposlen"/>
     </item>
-    <item row="1" column="1" colspan="3">
-     <widget class="QComboBox" name="zdr_usluge"/>
-    </item>
-    <item row="9" column="2" colspan="2">
-     <widget class="QPushButton" name="btn_promena">
+    <item row="9" column="0">
+     <widget class="QPushButton" name="btn_reset1">
       <property name="text">
-       <string>Promena</string>
+       <string>Ponisti zdravstvena odeljenja</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" colspan="3">
+     <widget class="QLineEdit" name="jmbg"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Zdravstveno odeljenje</string>
       </property>
      </widget>
     </item>
@@ -86,34 +107,13 @@
       </property>
      </widget>
     </item>
-    <item row="9" column="0">
-     <widget class="QPushButton" name="btn_reset1">
-      <property name="text">
-       <string>Ponisti zdravstvena odeljenja</string>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="1">
-     <widget class="QPushButton" name="btn_izvestaj">
-      <property name="text">
-       <string>Izvestaj</string>
-      </property>
-     </widget>
+    <item row="5" column="1">
+     <widget class="QLineEdit" name="ed_vreme_brisanja"/>
     </item>
     <item row="5" column="0">
      <widget class="QLabel" name="label_3">
       <property name="text">
        <string>Vreme brisanja pacijenta</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1">
-     <widget class="QLineEdit" name="ed_vreme_brisanja"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="text">
-       <string>Zdravstvena usluga</string>
       </property>
      </widget>
     </item>
@@ -125,7 +125,7 @@
      <x>0</x>
      <y>0</y>
      <width>695</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
