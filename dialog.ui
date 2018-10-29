@@ -10,6 +10,12 @@
     <height>344</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>STIX</family>
+    <pointsize>13</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>

@@ -10,8 +10,18 @@
     <height>449</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>STIX</family>
+    <pointsize>13</pointsize>
+    <stylestrategy>PreferAntialias</stylestrategy>
+   </font>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::DefaultContextMenu</enum>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Usluzni program statisticke obrade podataka pruzenih zdravstvenih usluga</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -125,7 +135,7 @@
      <x>0</x>
      <y>0</y>
      <width>695</width>
-     <height>25</height>
+     <height>35</height>
     </rect>
    </property>
   </widget>
