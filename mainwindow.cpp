@@ -17,8 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btn_promena, SIGNAL(clicked()), this, SLOT(promena()));
     connect(ui->btn_ok, SIGNAL(clicked()), this, SLOT(ok_funkcija()));
     connect(ui->btn_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(ui->btn_reset, SIGNAL(clicked()), this, SLOT(reset_funkcija()));
+    connect(ui->btn_reset, SIGNAL(clicked()), this, SLOT(reset_usluge()));
     connect(ui->btn_reset1, SIGNAL(clicked()), this, SLOT(reset_odeljenja()));
+    connect(ui->btn_izvestaj, SIGNAL(clicked()), this, SLOT(izvestaj_funkcija()));
 
 }
 
@@ -66,6 +67,7 @@ void MainWindow::promena()
     m_ui->show();
     connect(m_ui, SIGNAL(sendChange(QList<QString>, QList<QString>)),
             this, SLOT(receiveFromDialog(QList<QString>, QList<QString>)));
+    ui->jmbg->setFocus();
 }
 
 void MainWindow::receiveFromDialog(QList<QString> usluge, QList<QString> odeljenja)
@@ -85,13 +87,15 @@ void MainWindow::ok_funkcija()
                          " " + vrsta + " " + vreme);
     ui->jmbg->setText("");
     ui->lE_zdr_rad->setText("");
+    ui->jmbg->setFocus();
 }
 
-void MainWindow::reset_funkcija()
+void MainWindow::reset_usluge()
 {
     ui->zdr_usluge->clear();
     QFile file("zdravstvene_usluge.txt");
     file.resize(0);
+    ui->jmbg->setFocus();
 }
 
 void MainWindow::reset_odeljenja()
@@ -99,6 +103,12 @@ void MainWindow::reset_odeljenja()
     ui->cb_zdr_odeljenje->clear();
     QFile file("zdravstvena_odeljenja.txt");
     file.resize(0);
+    ui->jmbg->setFocus();
+}
+
+void MainWindow::izvestaj_funkcija()
+{
+    ui->jmbg->setFocus();
 }
 
 

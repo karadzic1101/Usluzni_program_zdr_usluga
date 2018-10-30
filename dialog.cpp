@@ -15,6 +15,8 @@ Dialog::Dialog(QWidget *parent) :
     connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(sendToMainWindow()));
     connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(closeAndSend()));
 
+    m_ui->el_usluga->setFocus();
+
 }
 
 void Dialog::sendToMainWindow()
