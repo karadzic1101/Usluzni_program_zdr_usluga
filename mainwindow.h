@@ -17,6 +17,7 @@ public:
     ~MainWindow();
 private:
     void initialise_enviroment();
+    void initialise_database();
 public:
     Ui::MainWindow *ui;
     Dialog *m_ui;

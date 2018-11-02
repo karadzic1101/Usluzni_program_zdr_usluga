@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <QTextStream>
 #include <QFile>
+#include <QSql>
+#include <QDebug>
+#include <QDir>
+#include <QSqlDatabase>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -13,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     initialise_enviroment();
+    initialise_database();
 
     connect(ui->btn_promena, SIGNAL(clicked()), this, SLOT(promena()));
     connect(ui->btn_ok, SIGNAL(clicked()), this, SLOT(ok_funkcija()));
@@ -21,6 +26,24 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->btn_reset1, SIGNAL(clicked()), this, SLOT(reset_odeljenja()));
     connect(ui->btn_izvestaj, SIGNAL(clicked()), this, SLOT(izvestaj_funkcija()));
 
+}
+
+void MainWindow::initialise_database()
+{
+    QSqlDatabase db;
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("/home/aleksandra/proba1/database");
+
+    qDebug() << "start";
+
+//    qDebug() << QDir::currentPath();
+
+    if(!db.open())
+    {
+        qDebug() << "problem opening database";
+    }
+
+    qDebug() << "end";
 }
 
 void MainWindow::initialise_enviroment()

@@ -16,12 +16,10 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     dialog.cpp \
     models.cpp
-#    zdrbaza.cpp
 
 HEADERS  += mainwindow.h \
     dialog.h \
     models.h
-#    zdrbaza.h
 
 FORMS    += mainwindow.ui \
     dialog.ui
