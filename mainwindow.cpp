@@ -4,11 +4,9 @@
 #include "iostream"
 #include <stdio.h>
 #include <QTextStream>
-#include <QFile>
-#include <QSql>
-#include <QDebug>
-#include <QDir>
-#include <QSqlDatabase>
+#include <QFileInfo>
+#include <QSqlQuery>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,19 +28,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::initialise_database()
 {
-    QSqlDatabase db;
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/home/aleksandra/proba1/database");
+    db.setDatabaseName("/home/aleksandra/Usluzni_program_zdr_usluga/database");
 
     qDebug() << "start";
-
-//    qDebug() << QDir::currentPath();
 
     if(!db.open())
     {
         qDebug() << "problem opening database";
     }
-
     qDebug() << "end";
 }
 
@@ -99,6 +93,21 @@ void MainWindow::receiveFromDialog(QList<QString> usluge, QList<QString> odeljen
     ui->zdr_usluge->addItems(usluge);
 }
 
+void MainWindow::dodajZdrUslugu(QSqlQuery &q, const QString &usluga)
+{
+    q.addBindValue(usluga);
+    q.exec();
+}
+
+void MainWindow::dodajZdrRadnika(QSqlQuery &q, const QString &radnik, int jmbg, int id_usl, int broj)
+{
+    q.addBindValue(radnik);
+    q.addBindValue(jmbg);
+    q.addBindValue(id_usl);
+    q.addBindValue(broj);
+    q.exec();
+}
+
 void MainWindow::ok_funkcija()
 {
     QString zdr_usl = ui->zdr_usluge->currentText();
@@ -106,8 +115,45 @@ void MainWindow::ok_funkcija()
     QString zdr_rad = ui->lE_zdr_rad->text();
     QString vrsta = ui->cb_zaposlen->currentText();
     QString vreme = ui->ed_vreme_brisanja->text();
-    ui->lbl_zdr->setText(zdr_usl + " " + jmbg_str + " " + zdr_rad +
-                         " " + vrsta + " " + vreme);
+
+    if(zdr_usl != " ") {
+        ui->lbl_zdr->setText(zdr_usl);
+        QSqlQuery query(db);
+        if(!query.prepare(QLatin1String("insert into ZdravstvenaUsluga(naziv_usluge) values(?)")))
+        {
+            qDebug() << "zdr_usl PROBLEM!!!";
+            return;
+        }
+        dodajZdrUslugu(query, zdr_usl);
+    }
+
+    if (jmbg_str != " ") {
+        QSqlQuery query(db);
+//        ui->lbl_zdr->setText(jmbg_str);
+        if(!query.prepare(QLatin1String("SELECT jmbg from ZdravstveniRadnik where jmbg like ?")))
+            return;
+        query.addBindValue(jmbg_str.toInt());
+        query.first();
+        if (query.value(1).toString() != "")
+        {
+            ui->lbl_zdr->setText("aaaaaaaaaaa");
+            query.prepare("select id_usluge from ZdravstvenaUsluga where naziv_usluge like ?");
+            query.addBindValue(zdr_usl);
+            query.exec();
+            int id_usl = query.value("id_usluge").toInt();
+            if(!query.prepare(QLatin1String("insert into ZdravstveniRadnik(imePrezime, jmbg, id_usluge, broj_usluge)"
+                                          "values(?,?,?,?)")))
+            {
+                qDebug() << "JMBG PROBLEM!!!";
+                return;
+            }
+            dodajZdrRadnika(query, zdr_rad, jmbg_str.toInt(), id_usl, 1);
+        }
+//            ui->lbl_zdr->setText(query.value("jmbg").toString());
+//            qDebug() << query.value("jmbg").toString();
+
+    }
+
     ui->jmbg->setText("");
     ui->lE_zdr_rad->setText("");
     ui->jmbg->setFocus();
@@ -133,7 +179,6 @@ void MainWindow::izvestaj_funkcija()
 {
     ui->jmbg->setFocus();
 }
-
 
 MainWindow::~MainWindow()
 {

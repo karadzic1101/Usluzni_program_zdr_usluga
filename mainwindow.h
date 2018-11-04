@@ -4,6 +4,12 @@
 #include <QMainWindow>
 #include "dialog.h"
 
+#include <QSql>
+#include <QDebug>
+#include <QDir>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+
 namespace Ui {
 class MainWindow;
 }
@@ -18,6 +24,9 @@ public:
 private:
     void initialise_enviroment();
     void initialise_database();
+    void dodajZdrUslugu(QSqlQuery &q, const QString &usluga);
+    void dodajZdrRadnika(QSqlQuery &q, const QString &radnik, int jmbg, int id_usl, int broj);
+    QSqlDatabase db;
 public:
     Ui::MainWindow *ui;
     Dialog *m_ui;
