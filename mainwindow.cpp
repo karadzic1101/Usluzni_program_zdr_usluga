@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "dialog.h"
+#include "database.h"
 #include "iostream"
+
 #include <stdio.h>
 #include <QTextStream>
 #include <QSqlQuery>
@@ -84,70 +86,33 @@ void MainWindow::receiveFromDialog(QList<QString> usluge, QList<QString> odeljen
     ui->zdr_usluge->addItems(usluge);
 }
 
-void MainWindow::pripremiZdrUslugu(QSqlQuery &q, const QString &usluga)
-{
-    q.addBindValue(usluga);
-    q.exec();
-}
-
-void MainWindow::dodajZdrRadnika(QSqlQuery &q, const QString &radnik, QString zanimanje, QString jmbg, int id_usl, int broj, QString vreme)
-{
-    q.addBindValue(radnik);
-    q.addBindValue(zanimanje);
-    q.addBindValue(jmbg);
-    q.addBindValue(id_usl);
-    q.addBindValue(broj);
-    q.addBindValue(vreme);
-    q.exec();
-}
 
 void MainWindow::zdrUslugaFunkcija(QString zdrU, QSqlQuery &query)
 {
     ui->lbl_zdr->setText(zdrU);
 
-    if(!query.prepare("select id_usluge from ZdravstvenaUsluga where naziv_usluge like ?"))
-    {
-        qDebug() << "zdr_usl PROBLEM!!!";
-        return;
-    }
+
     pripremiZdrUslugu(query, zdrU);
-    query.first();
+
     qDebug() << query.value(0).toInt();
 
     if(query.value(0).toInt() == 0)
     {
-        if(!query.prepare(QLatin1String("insert into ZdravstvenaUsluga(naziv_usluge) values(?)")))
-        {
-            qDebug() << "zdr_usl PROBLEM!!!";
-            return;
-        }
-        pripremiZdrUslugu(query, zdrU);
+        dodajZdrUslugu(query, zdrU);
     }
 }
 
 void MainWindow::zdrRadFunkcija(QSqlQuery &query, QString zdr_rad, QString zanimanje, QString jmbg, QString zdr_usl, QString vreme)
 {
-    if(!query.prepare("SELECT jmbg from ZdravstveniRadnik where jmbg like ?"))
-        return;
-    query.addBindValue(jmbg);
-    query.exec();
-    query.first();
+    dodajJmbg(query, jmbg);
 
     if (query.value(0).toString() == "")
     {
         ui->lbl_zdr->setText("Pacijent sa maticnim brojem " + jmbg + " je unet u bazu");
-        query.prepare(QLatin1String("select id_usluge from ZdravstvenaUsluga where naziv_usluge like ?"));
-        query.addBindValue(zdr_usl);
-        query.exec();
-        query.first();
+        nadjiIDusluge(query, zdr_usl);
         int id_usl = query.value(0).toInt();
-        if(!query.prepare(QLatin1String("insert into ZdravstveniRadnik(imePrezime, zanimanje, jmbg, id_usluge, broj_usluge, vreme_brisanja)"
-                                      "values(?,?,?,?, ?, ?)")))
-        {
-            qDebug() << "JMBG PROBLEM!!!";
-            return;
-        }
-        dodajZdrRadnika(query, zdr_rad, zanimanje, jmbg, id_usl, 1, vreme);
+
+        pripremiZdrRadnika(query, zdr_rad, zanimanje, jmbg, id_usl, 1, vreme);
     }
     else {
         ui->lbl_zdr->setText("Pacijent sa maticnim brojem " + jmbg + " je vec u bazi");
@@ -156,37 +121,19 @@ void MainWindow::zdrRadFunkcija(QSqlQuery &query, QString zdr_rad, QString zanim
 
 void MainWindow::zdrOdeljenjeFunkcija(QSqlQuery &query, QString odeljenje, QString zdr_rad, QString zdr_usl)
 {
-    if (!query.prepare("select id_usluge from ZdravstvenaUsluga where naziv_usluge like ?"))
-        return;
-    query.addBindValue(zdr_usl);
-    query.exec();
-    query.first();
+    nadjiIDusluge(query, zdr_usl);
     int idUsluge= query.value(0).toInt();
 
-    if (!query.prepare("select id_radnika from ZdravstveniRadnik where imePrezime like ?"))
-        return;
-    query.addBindValue(zdr_rad);
-    query.exec();
-    query.first();
+    nadjiIDRadnika(query, zdr_rad);
     int idRadnika = query.value(0).toInt();
 
-    if (!query.prepare("select id_radnika from ZdravstvenaOdeljenja where id_radnika like ?"))
-        return;
-    query.addBindValue(idRadnika);
-    query.exec();
-    query.first();
+    nadjiIDRadnika(query, zdr_rad);
 
     qDebug() << query.value(0).toInt();
 
     if(query.value(0).toInt() == 0) {
-        if (!query.prepare("insert into ZdravstvenaOdeljenja(naziv, id_radnika, id_usluge) values(?, ?, ?)"))
-            return;
-        query.addBindValue(odeljenje);
-        query.addBindValue(idRadnika);
-        query.addBindValue(idUsluge);
-        query.exec();
+       dodajZdravstvenoOdeljenje(query, odeljenje, idRadnika, idUsluge);
     }
-
 }
 
 
@@ -230,20 +177,19 @@ void MainWindow::ok_funkcija()
 
 void MainWindow::reset_usluge()
 {
-    ui->zdr_usluge->clear();
-//    QFile file("zdravstvene_usluge.txt");
-//    file.resize(0);
     QSqlQuery query(db);
-    query.prepare("delete from ZdravstvenaUsluge");
-    query.exec();
+    query.exec("delete from ZdravstvenaUsluga");
+
+    ui->zdr_usluge->clear();
     ui->jmbg->setFocus();
 }
 
 void MainWindow::reset_odeljenja()
 {
+    QSqlQuery query(db);
+    query.exec("delete from ZdravstvenaOdeljenja");
+
     ui->cb_zdr_odeljenje->clear();
-    QFile file("zdravstvena_odeljenja.txt");
-    file.resize(0);
     ui->jmbg->setFocus();
 }
 
