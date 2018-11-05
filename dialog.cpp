@@ -24,36 +24,16 @@ void Dialog::sendToMainWindow()
     QString usluga = m_ui->el_usluga->text();
     QString odeljenje = m_ui->el_odeljenje->text();
 
-    QString zdravstvene_usluge_file = "zdravstvene_usluge.txt";
-    QFile file_usluge(zdravstvene_usluge_file);
-
-    QString zdravstvene_odeljenja_file = "zdravstvena_odeljenja.txt";
-    QFile file_odeljenja(zdravstvene_odeljenja_file);
-
-    if(file_usluge.open(QIODevice::WriteOnly | QIODevice::Append))
+    if(usluga != "")
     {
-        QTextStream stream_usluge(&file_usluge);
-        if(usluga != "")
-        {
-            lista_usluga.append(usluga);
-            stream_usluge << usluga << endl;
-            stream_usluge.flush();
-        }
+        lista_usluga.append(usluga);
     }
 
-    if(file_odeljenja.open(QIODevice::WriteOnly | QIODevice::Append))
+    if(odeljenje != "")
     {
-        QTextStream stream_odeljenja(&file_odeljenja);
-        if(odeljenje != "")
-        {
-            lista_odeljenja.append(odeljenje);
-            stream_odeljenja << odeljenje << endl;
-            stream_odeljenja.flush();
-        }
+        lista_odeljenja.append(odeljenje);
     }
 
-    file_usluge.close();
-    file_odeljenja.close();
     m_ui->el_usluga->setText("");
     m_ui->el_odeljenje->setText("");
     m_ui->el_usluga->setFocus();

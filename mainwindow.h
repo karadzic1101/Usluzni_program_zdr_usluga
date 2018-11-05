@@ -24,8 +24,11 @@ public:
 private:
     void initialise_enviroment();
     void initialise_database();
-    void dodajZdrUslugu(QSqlQuery &q, const QString &usluga);
-    void dodajZdrRadnika(QSqlQuery &q, const QString &radnik, int jmbg, int id_usl, int broj);
+    void pripremiZdrUslugu(QSqlQuery &q, const QString &usluga);
+    void dodajZdrRadnika(QSqlQuery &q, const QString &radnik, QString zanimanje, QString jmbg, int id_usl, int broj, QString vreme);
+    void zdrUslugaFunkcija(QString zdrU, QSqlQuery &q);
+    void zdrRadFunkcija(QSqlQuery &query, QString zdr_rad, QString zanimanje, QString jmbg, QString zdr_usl, QString vreme);
+    void zdrOdeljenjeFunkcija(QSqlQuery &query, QString odeljenje, QString zdr_rad, QString zdr_usl);
     QSqlDatabase db;
 public:
     Ui::MainWindow *ui;
