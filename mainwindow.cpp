@@ -52,7 +52,7 @@ void MainWindow::initialise_enviroment()
         while (query.next())
         {
             ui->zdr_usluge->addItem(query.value(0).toString());
-            qDebug() << query.value(0).toString();
+//            qDebug() << query.value(0).toString();
         }
     }
 
@@ -63,10 +63,12 @@ void MainWindow::initialise_enviroment()
 
     query.exec("select naziv from ZdravstvenaOdeljenja");
     query.first();
-
-    while (query.next())
-    {
+    if(query.value(0).toString() != "") {
         ui->cb_zdr_odeljenje->addItem(query.value(0).toString());
+        while (query.next())
+        {
+            ui->cb_zdr_odeljenje->addItem(query.value(0).toString());
+        }
     }
 }
 
@@ -86,17 +88,11 @@ void MainWindow::receiveFromDialog(QList<QString> usluge, QList<QString> odeljen
     ui->zdr_usluge->addItems(usluge);
 }
 
-
 void MainWindow::zdrUslugaFunkcija(QString zdrU, QSqlQuery &query)
 {
-    ui->lbl_zdr->setText(zdrU);
+    int idUsluge = nadjiIDusluge(query, zdrU);
 
-
-    pripremiZdrUslugu(query, zdrU);
-
-    qDebug() << query.value(0).toInt();
-
-    if(query.value(0).toInt() == 0)
+    if(idUsluge == 0)
     {
         dodajZdrUslugu(query, zdrU);
     }
@@ -104,35 +100,26 @@ void MainWindow::zdrUslugaFunkcija(QString zdrU, QSqlQuery &query)
 
 void MainWindow::zdrRadFunkcija(QSqlQuery &query, QString zdr_rad, QString zanimanje, QString jmbg, QString zdr_usl, QString vreme)
 {
-    dodajJmbg(query, jmbg);
+    QString new_jmbg = dodajJmbg(query, jmbg);
 
-    if (query.value(0).toString() == "")
+    if (new_jmbg == "")
     {
         ui->lbl_zdr->setText("Pacijent sa maticnim brojem " + jmbg + " je unet u bazu");
-        nadjiIDusluge(query, zdr_usl);
-        int id_usl = query.value(0).toInt();
+        int id_usl = nadjiIDusluge(query, zdr_usl);
 
-        pripremiZdrRadnika(query, zdr_rad, zanimanje, jmbg, id_usl, 1, vreme);
+        dodajZdrRadnika(query, zdr_rad, zanimanje, jmbg, id_usl, 1, vreme);
     }
     else {
         ui->lbl_zdr->setText("Pacijent sa maticnim brojem " + jmbg + " je vec u bazi");
     }
 }
 
-void MainWindow::zdrOdeljenjeFunkcija(QSqlQuery &query, QString odeljenje, QString zdr_rad, QString zdr_usl)
+void MainWindow::zdrOdeljenjeFunkcija(QSqlQuery &query, QString odeljenje)
 {
-    nadjiIDusluge(query, zdr_usl);
-    int idUsluge= query.value(0).toInt();
+     QString new_odeljenje =  nadjiOdeljenje(query, odeljenje);
 
-    nadjiIDRadnika(query, zdr_rad);
-    int idRadnika = query.value(0).toInt();
-
-    nadjiIDRadnika(query, zdr_rad);
-
-    qDebug() << query.value(0).toInt();
-
-    if(query.value(0).toInt() == 0) {
-       dodajZdravstvenoOdeljenje(query, odeljenje, idRadnika, idUsluge);
+     if(new_odeljenje == "") {
+       dodajZdravstvenoOdeljenje(query, odeljenje);
     }
 }
 
@@ -159,13 +146,21 @@ void MainWindow::ok_funkcija()
         if (zdr_usl != "") {
             zdrUslugaFunkcija(zdr_usl, query);
         }
-
         if (jmbg_str != "") {
-            zdrRadFunkcija(query, zdr_rad, vrsta, jmbg_str, zdr_usl, vreme);
+            if (jmbg_str.length() != 13) {
+                QMessageBox msgBox;
+                msgBox.setText("Maticni broj je pogresna, nema 13 karaktera");
+                msgBox.setWindowTitle("Maticni broj");
+                msgBox.exec();
+            }
+            else {
+                zdrRadFunkcija(query, zdr_rad, vrsta, jmbg_str, zdr_usl, vreme);
+                dodajNovogRadnika(query, zdr_rad);
+                updateBrojUsluga(query, zdr_rad, zdr_usl);
+            }
         }
-
         if (odeljenje != "") {
-            zdrOdeljenjeFunkcija(query, odeljenje, zdr_rad, zdr_usl);
+            zdrOdeljenjeFunkcija(query, odeljenje);
         }
     }
 
@@ -179,6 +174,7 @@ void MainWindow::reset_usluge()
 {
     QSqlQuery query(db);
     query.exec("delete from ZdravstvenaUsluga");
+    query.exec("UPDATE sqlite_sequence set seq=0 where name='ZdravstvenaUsluga'");
 
     ui->zdr_usluge->clear();
     ui->jmbg->setFocus();
@@ -188,6 +184,7 @@ void MainWindow::reset_odeljenja()
 {
     QSqlQuery query(db);
     query.exec("delete from ZdravstvenaOdeljenja");
+    query.exec("UPDATE sqlite_sequence set seq=0 where name='ZdravstvenaOdeljenja'");
 
     ui->cb_zdr_odeljenje->clear();
     ui->jmbg->setFocus();
@@ -195,6 +192,22 @@ void MainWindow::reset_odeljenja()
 
 void MainWindow::izvestaj_funkcija()
 {
+    QString usluga = ui->zdr_usluge->currentText();
+    QString radnik = ui->lE_zdr_rad->text();
+    QSqlQuery query(db);
+    int idUsluge = nadjiIDusluge(query, usluga);
+    int ukupnoUsluga =  brojUsluga(query, idUsluge);
+
+    int uslugaPoRadniku = brUslugaPoRadniku(query, radnik, idUsluge);
+    float procenat = ((float)uslugaPoRadniku/ukupnoUsluga)*100;
+    qDebug() << ukupnoUsluga;
+    qDebug() << uslugaPoRadniku;
+    qDebug() << procenat;
+
+    ui->lbl_zdr->setText("Radnik "+radnik+" je pregledao " + QString::number(uslugaPoRadniku) + " sto je "
+                         + QString::number(procenat, 'f', 3) +"%");
+
+
     ui->jmbg->setFocus();
 }
 
