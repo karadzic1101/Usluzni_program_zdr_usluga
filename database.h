@@ -3,22 +3,20 @@
 
 #include <QSqlQuery>
 
-void dodajZdrRadnika(QSqlQuery &q, const QString &radnik, QString zanimanje, QString jmbg, int id_usl, int mesec, QString vreme);
-void dodajZdrUslugu(QSqlQuery &q, const QString &usluga, int broj);
-QString dodajJmbg(QSqlQuery &q, QString jmbg);
-int nadjiIDusluge(QSqlQuery &q, QString zdr_usl);
-void nadjiIDRadnika(QSqlQuery &q, QString zdr_rad);
-void dodajZdravstvenoOdeljenje(QSqlQuery &q, QString odeljenje);
-void dodajZdrUslugu(QSqlQuery &q, const QString &usluga);
-void nadjiIdRadUsl(QSqlQuery &q, int idRad, int idUsl);
-QString nadjiOdeljenje(QSqlQuery &q, QString odeljenje);
-void updateZdrUslugu(QSqlQuery &q, int zdr_usl, int brojUsluga);
-int brojZdrUsluga(QSqlQuery &query, int idUsluge);
-int brUslugaPoRadniku(QSqlQuery &q, int idUsluge, int mesec);
-void dodajNovogRadnika(QSqlQuery &q, QString zdr_rad);
-void updateBrojUsluga(QSqlQuery &q, QString radnik, QString usluga);
-void updateVremeBrisanje(QSqlQuery &q, QString jmbg, QString datum_brisanja);
-void deletePatients(QSqlQuery &q, QString date);
 
 #endif // DATABASE_H
 
+void deletePatients(QSqlQuery &q, QString date);
+void dodajZdrRadnika(QSqlQuery &q, const QString &radnik, QString odeljenje);
+void dodajPruzenuUslugu(QSqlQuery &q, QString jmbg, int id_rad, int id_usl, QString datum, QString datum_brisanja);
+int zdrOdeljenje(QSqlQuery &q, QString odeljenje);
+void dodajZdrUslugu(QSqlQuery &q, const QString &usluga, QString odeljenje);
+int nadjiIDusluge(QSqlQuery &q, QString zdr_usl);
+int nadjiOdeljenje(QSqlQuery &q, QString odeljenje);
+int nadjiIDRadnika(QSqlQuery &q, QString zdr_rad);
+void dodajZdravstvenoOdeljenje(QSqlQuery &q, QString odeljenje);
+void dodajPacijenta(QSqlQuery &q, QString jmbg);
+QString nadjiJmbg(QSqlQuery &q, QString jmbg);
+void updateVremeBrisanje(QSqlQuery &q, QString jmbg, QString datum_brisanja);
+void mesecniIzvestaj(QSqlQuery &q, int id_rad, int id_usluge, int mesec, int broj_usluga);
+int brojUsluga(QSqlQuery &q, int id_radnika, int id_usluge);

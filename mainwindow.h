@@ -22,15 +22,17 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
 private:
     void initialise_enviroment();
     void initialise_database();
-//    void pripremiZdrUslugu(QSqlQuery &q, const QString &usluga);
-//    void dodajZdrRadnika(QSqlQuery &q, const QString &radnik, QString zanimanje, QString jmbg, int id_usl, int broj, QString vreme);
-    void zdrUslugaFunkcija(QString zdrU, QSqlQuery &q);
-    void zdrRadFunkcija(QSqlQuery &query, QString zdr_rad, QString zanimanje, QString jmbg, QString zdr_usl);
+
+    void zdrUslugaFunkcija(QSqlQuery &q, QString usluga, QString odeljenje);
     void zdrOdeljenjeFunkcija(QSqlQuery &query, QString odeljenje);
+    void pruzenaUsluga(QSqlQuery &query, QString jmbg, QString radnik, QString usluga);
+
     QSqlDatabase db;
+
 public:
     Ui::MainWindow *ui;
     Dialog *m_ui;

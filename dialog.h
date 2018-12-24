@@ -26,6 +26,7 @@ private slots:
 
 signals:
     void sendChange(QList<QString>, QList<QString>);
+    void odeljenjeIusluga(QString odeljenje, QString usluga);
 };
 
 #endif // DIALOG_H
