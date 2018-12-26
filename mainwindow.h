@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "dialog.h"
 #include "calendarform.h"
+#include "izvestajdialog.h"
 
 #include <QSql>
 #include <QDebug>
@@ -23,6 +24,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QString zdravstvna_usluga_izvestaj;
 private:
     void initialise_enviroment();
     void initialise_database();
@@ -30,6 +32,7 @@ private:
     void zdrUslugaFunkcija(QSqlQuery &q, QString usluga, QString odeljenje);
     void zdrOdeljenjeFunkcija(QSqlQuery &query, QString odeljenje);
     void pruzenaUsluga(QSqlQuery &query, QString jmbg, QString radnik, QString usluga);
+    void mesecni_godisnji_izvestaj(QSqlQuery &query, QString radnik, QString usluga);
 
     QSqlDatabase db;
 
@@ -37,6 +40,8 @@ public:
     Ui::MainWindow *ui;
     Dialog *m_ui;
     CalendarForm *c_ui;
+    IzvestajDialog *i_ui;
+
     QString datum_brisanja;
     int mesec_unosa;
     int trenutna_godina;
@@ -50,6 +55,9 @@ private slots:
    void receveDate(QString date);
    void izvestaj_funkcija();
    void vreme_brisanja();
+
+signals:
+   void sendUsluga(QString);
 };
 
 #endif // MAINWINDOW_H

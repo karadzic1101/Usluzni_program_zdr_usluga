@@ -6,7 +6,7 @@
 
 void deletePatients(QSqlQuery &q, QString date)
 {
-    if (!q.prepare("delete from PruzeneUsluge where datum_brisanja like ?"))
+    if (!q.prepare("delete from PruzeneUsluge where datum_brisanja <= ?"))
         qDebug() << "delete PROBLEM";
     q.addBindValue(date);
     q.exec();
@@ -168,4 +168,59 @@ void updateMesecniIzvestaj(QSqlQuery &q, int id_rad, int id_usluge, int mesec, i
     q.addBindValue(id_rad);
     q.addBindValue(id_usluge);
     q.exec();
+}
+
+int getMonth(QSqlQuery &q)
+{
+    if (!q.prepare("select mesec from MesecniIzvestaj")) {
+       qDebug() << "Izvlacenje meseca PROBLEM!!!!";
+       return -1;
+    }
+    q.exec();
+    q.first();
+    qDebug() << "upit mesec " << q.value(0).toInt();
+    return q.value(0).toInt();
+}
+
+int getYear(QSqlQuery &q)
+{
+    if (!q.prepare("select godina from GodisnjiIzvestaj")) {
+       qDebug() << "Izvlacenje godine PROBLEM!!!!";
+       return -1;
+    }
+    q.exec();
+    q.first();
+    qDebug() << "godina iz izvestaja " << q.value(0).toInt();
+    return q.value(0).toInt();
+}
+
+void godisnjiIzvestaj(QSqlQuery &q, int mesec, int godina, int radnik, int usluga, int br_usluga)
+{
+    if (!q.prepare("inser into GodisnjiIzvestaj(id_radnika, id_usluge, godina, " + QString::number(mesec) + ") values(?,?,?,?)"))
+    {
+        qDebug() << "unos u GodisnjiIzvestaj PROBLEM!!!!!!!!";
+        return;
+    }
+    q.addBindValue(radnik);
+    q.addBindValue(usluga);
+    q.addBindValue(godina);
+    q.addBindValue(br_usluga);
+    q.exec();
+    return;
+}
+
+void resetMesecnogIzvestaja(QSqlQuery &q)
+{
+    if (!q.prepare("delete from MesecniIzvestaj"))
+        qDebug() << "brisanje MesecniIzvestaj PROBLEM";
+    q.exec();
+    return;
+}
+
+void resetGodisnjiIzvestaj(QSqlQuery &q)
+{
+    if (!q.prepare("delete from GodisnjiIzvestaj"))
+        qDebug() << "brisanje GodisnjiIzvestaj PROBLEM";
+    q.exec();
+    return;
 }

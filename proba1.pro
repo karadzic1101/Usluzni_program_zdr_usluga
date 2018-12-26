@@ -16,13 +16,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     dialog.cpp \
     database.cpp \
-    calendarform.cpp
+    calendarform.cpp \
+    izvestajdialog.cpp
 
 HEADERS  += mainwindow.h \
     dialog.h \
     database.h \
-    calendarform.h
+    calendarform.h \
+    izvestajdialog.h
 
 FORMS    += mainwindow.ui \
     dialog.ui \
-    calendarform.ui
+    calendarform.ui \
+    izvestajdialog.ui

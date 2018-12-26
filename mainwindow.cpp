@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "dialog.h"
 #include "calendarform.h"
+#include "izvestajdialog.h"
 #include "database.h"
 #include "iostream"
 
@@ -132,10 +133,11 @@ void MainWindow::pruzenaUsluga(QSqlQuery &query, QString jmbg, QString radnik, Q
 void MainWindow::zdrOdeljenjeFunkcija(QSqlQuery &query, QString odeljenje)
 {
      int new_odeljenje =  nadjiOdeljenje(query, odeljenje);
+     qDebug() << "odeljenje = " << new_odeljenje;
 
-     if(new_odeljenje != -1) {
-       dodajZdravstvenoOdeljenje(query, odeljenje);
-    }
+     if (new_odeljenje == 0) {
+         dodajZdravstvenoOdeljenje(query, odeljenje);
+     }
 }
 
 
@@ -173,19 +175,66 @@ void MainWindow::ok_funkcija()
         }
     }
 
-    int id_radnika = nadjiIDRadnika(query, zdr_rad);
-    int id_usluge = nadjiIDusluge(query, zdr_usl);
+    mesecni_godisnji_izvestaj(query, zdr_rad, zdr_usl);
 
-    if (id_radnika == -1 || id_usluge == -1)
-        mesecniIzvestaj(query, id_radnika, id_usluge, mesec_unosa, 1);
-    else {
-        int br_usluga = brojUsluga(query, id_radnika, id_usluge);
-        mesecniIzvestaj(query, id_radnika, id_usluge, mesec_unosa, br_usluga+1);
-    }
+
 
     ui->jmbg->setText("");
     ui->lE_zdr_rad->setText("");
     ui->jmbg->setFocus();
+}
+
+void MainWindow::mesecni_godisnji_izvestaj(QSqlQuery &query, QString radnik, QString usluga)
+{
+    int id_radnika = nadjiIDRadnika(query, radnik);
+    int id_usluge = nadjiIDusluge(query, usluga);
+    int br_usluga = brojUsluga(query, id_radnika, id_usluge);
+    int mesec_izvestaj = getMonth(query);
+    int godina_izvestaj = getYear(query);
+    int mesec = QDate::currentDate().month();
+    int godina = QDate::currentDate().year();
+
+    if (mesec_izvestaj == 0) {
+        mesecniIzvestaj(query, id_radnika, id_usluge, mesec_unosa, 1);
+        return;
+    }
+
+    if (mesec_izvestaj != mesec) {
+        if (godina_izvestaj == godina || godina_izvestaj == 0) {
+            query.exec("select id_radnika, id_usluge, mesec, broj_usluga from MesecniIzvestaj");
+            query.first();
+            godisnjiIzvestaj(query, query.value(2).toInt(), godina,
+                             query.value(0).toInt(),
+                             query.value(1).toInt(),
+                             query.value(3).toInt());
+            while(query.next())
+                godisnjiIzvestaj(query, query.value(2).toInt(), godina,
+                                 query.value(0).toInt(),
+                                 query.value(1).toInt(),
+                                 query.value(3).toInt());
+        } else {
+            resetGodisnjiIzvestaj(query);
+            query.exec("select id_radnika, id_usluge, mesec, broj_usluga from MesecniIzvestaj");
+            query.first();
+            godisnjiIzvestaj(query, query.value(2).toInt(), godina,
+                             query.value(0).toInt(),
+                             query.value(1).toInt(),
+                             query.value(3).toInt());
+            while(query.next())
+                godisnjiIzvestaj(query, query.value(2).toInt(), godina,
+                                 query.value(0).toInt(),
+                                 query.value(1).toInt(),
+                                 query.value(3).toInt());
+        }
+        resetMesecnogIzvestaja(query);
+    }
+
+    if (id_radnika == -1 || id_usluge == -1)
+        mesecniIzvestaj(query, id_radnika, id_usluge, mesec_unosa, 1);
+    else {
+        updateMesecniIzvestaj(query, id_radnika, id_usluge, mesec_unosa, br_usluga+1);
+    }
+
 }
 
 void MainWindow::reset_usluge()
@@ -210,24 +259,9 @@ void MainWindow::reset_odeljenja()
 
 void MainWindow::izvestaj_funkcija()
 {
-//    QString usluga = ui->zdr_usluge->currentText();
-//    QString radnik = ui->lE_zdr_rad->text();
-//    QSqlQuery query(db);
-//    int idUsluge = nadjiIDusluge(query, usluga);
-////    int ukupnoUsluga =  brojZdrUsluga(query, idUsluge);
-
-//    int mesec = QDate::currentDate().month();
-////    int uslugaPoRadniku = brUslugaPoRadniku(query, idUsluge, mesec);
-////    float procenat = ((float)uslugaPoRadniku/ukupnoUsluga)*100;
-////    qDebug() << ukupnoUsluga;
-////    qDebug() << uslugaPoRadniku;
-////    qDebug() << procenat;
-
-//    ui->lbl_zdr->setText("Radnik "+radnik+" je pregledao " + QString::number(uslugaPoRadniku) + " sto je "
-//                         + QString::number(procenat, 'f', 3) +"%");
-
-
-//    ui->jmbg->setFocus();
+    zdravstvna_usluga_izvestaj = ui->zdr_usluge->currentText();
+    i_ui = new IzvestajDialog(this);
+    i_ui->show();
 }
 
 void MainWindow::vreme_brisanja()
