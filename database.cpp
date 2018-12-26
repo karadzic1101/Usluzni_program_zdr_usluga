@@ -224,3 +224,17 @@ void resetGodisnjiIzvestaj(QSqlQuery &q)
     q.exec();
     return;
 }
+
+QString nadjiRadnika(QSqlQuery &q, int id_radnika)
+{
+    if (!q.prepare("select imePrezime from ZdravstveniRadnik where id_radnika like ?"))
+    {
+        qDebug() << "izvlacenje imena i prezimena PROBLEM";
+        return NULL;
+    }
+    q.addBindValue(id_radnika);
+    q.exec();
+    q.first();
+    return q.value(0).toString();
+
+}

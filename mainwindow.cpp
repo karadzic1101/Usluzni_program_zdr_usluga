@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 #include "dialog.h"
 #include "calendarform.h"
-#include "izvestajdialog.h"
+#include "izvestajform.h"
 #include "database.h"
 #include "iostream"
 
@@ -61,8 +61,10 @@ void MainWindow::initialise_enviroment()
     query.first();
     if(query.value(0).toString() != "") {
         ui->zdr_usluge->addItem(query.value(0).toString());
+        zdravstvene_usluge.append(query.value(0).toString());
         while (query.next())
         {
+            zdravstvene_usluge.append(query.value(0).toString());
             ui->zdr_usluge->addItem(query.value(0).toString());
         }
     }
@@ -110,14 +112,12 @@ void MainWindow::pruzenaUsluga(QSqlQuery &query, QString jmbg, QString radnik, Q
 {
     QString datum = QDate::currentDate().toString("dd.MM.yy");
     QString new_jmbg = nadjiJmbg(query, jmbg);
-    qDebug() << new_jmbg;
 
     if (new_jmbg == "")
     {
         ui->lbl_zdr->setText("Pacijent sa maticnim brojem " + jmbg + " je unet u bazu");
         int id_usl = nadjiIDusluge(query, usluga);
         int id_rad = nadjiIDRadnika(query, radnik);
-        qDebug() << id_usl;
 
         dodajPruzenuUslugu(query, jmbg, id_rad, id_usl, datum, datum_brisanja);
         dodajPacijenta(query, jmbg);
@@ -259,9 +259,18 @@ void MainWindow::reset_odeljenja()
 
 void MainWindow::izvestaj_funkcija()
 {
-    zdravstvna_usluga_izvestaj = ui->zdr_usluge->currentText();
-    i_ui = new IzvestajDialog(this);
-    i_ui->show();
+    QSqlQuery query(db);
+    if_ui = new IzvestajForm(this);
+    int br_usluga = ui->zdr_usluge->count();
+
+    for (int i=0; i < br_usluga; i++)
+        zdravstvene_usluge.append(ui->zdr_usluge->itemText(i));
+
+    if_ui->zdravstveneUsluge(zdravstvene_usluge);
+    if_ui->posaljiQuery(query);
+    zdravstvene_usluge.clear();
+
+    if_ui->show();
 }
 
 void MainWindow::vreme_brisanja()

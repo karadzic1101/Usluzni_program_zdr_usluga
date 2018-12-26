@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include "dialog.h"
 #include "calendarform.h"
-#include "izvestajdialog.h"
+#include "izvestajform.h"
 
 #include <QSql>
 #include <QDebug>
@@ -24,7 +24,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    QString zdravstvna_usluga_izvestaj;
 private:
     void initialise_enviroment();
     void initialise_database();
@@ -40,9 +39,10 @@ public:
     Ui::MainWindow *ui;
     Dialog *m_ui;
     CalendarForm *c_ui;
-    IzvestajDialog *i_ui;
+    IzvestajForm *if_ui;
 
     QString datum_brisanja;
+    QList<QString> zdravstvene_usluge;
     int mesec_unosa;
     int trenutna_godina;
 

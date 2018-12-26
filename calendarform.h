@@ -17,7 +17,7 @@ public:
 
 private slots:
     void on_buttonBox_rejected();
-    void on_buttonBox_accepted();
+    void funkcija_datum();
 
 private:
     Ui::CalendarForm *ui;

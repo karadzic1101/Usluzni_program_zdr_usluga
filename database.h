@@ -26,3 +26,4 @@ int getYear(QSqlQuery &q);
 void godisnjiIzvestaj(QSqlQuery &q, int mesec, int godina, int radnik, int usluga, int br_usluga);
 void resetMesecnogIzvestaja(QSqlQuery &q);
 void resetGodisnjiIzvestaj(QSqlQuery &q);
+QString nadjiRadnika(QSqlQuery &q, int id_radnika);
