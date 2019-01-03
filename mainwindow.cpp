@@ -32,7 +32,8 @@ void MainWindow::initialise_database()
 {
     db = QSqlDatabase::addDatabase("QSQLITE");
 //    db.setDatabaseName("/home/aleksandra/Usluzni_program_zdr_usluga/database");
-    db.setDatabaseName("/home/aleksandra/proba1/database");
+//    db.setDatabaseName("/home/aleksandra/proba1/database");
+    db.setDatabaseName("C:/Users/Karadzic/Usluzni_program_zdr_usluga/database");
 
 
     if(!db.open())
