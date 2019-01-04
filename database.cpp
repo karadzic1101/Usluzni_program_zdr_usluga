@@ -1,68 +1,71 @@
-
 #include "database.h"
 #include "mainwindow.h"
 #include <QDebug>
 #include <QDate>
 #include <QSqlError>
 
-void dodajZdrRadnika(QSqlQuery &q, const QString &radnik, QString zanimanje, QString jmbg, int id_usl, int broj, QString vreme)
+void deletePatients(QSqlQuery &q, QString date)
 {
-    q.exec("select date('now')");
-//    int trenutno_vreme = q.value(0).toInt();
-    qDebug() << q.value(0).toDate();
-    if(!q.prepare(QLatin1String("insert into ZdravstveniRadnik(imePrezime, zanimanje, jmbg, id_usluge, broj_usluge, vreme_brisanja)"
-                                  "values(?,?,?,?, ?, ?)")))
-    {
-        qDebug() << "JMBG PROBLEM!!!";
-        return;
-    }
-    q.addBindValue(radnik);
-    q.addBindValue(zanimanje);
-    q.addBindValue(jmbg);
-    q.addBindValue(id_usl);
-    q.addBindValue(broj);
-    q.addBindValue(vreme);
+    if (!q.prepare("delete from PruzeneUsluge where datum_brisanja <= ?"))
+        qDebug() << "delete PROBLEM";
+    q.addBindValue(date);
     q.exec();
 }
 
-void dodajZdrUslugu(QSqlQuery &q, const QString &usluga)
+void dodajZdrRadnika(QSqlQuery &q, const QString &radnik, QString odeljenje)
 {
-    if(!q.prepare(QLatin1String("insert into ZdravstvenaUsluga(naziv_usluge) values(?)")))
+    int idOdeljenja = zdrOdeljenje(q, odeljenje);
+    int idRad = nadjiIDRadnika(q, radnik);
+    if (idRad == 0) {
+        if(!q.prepare(QLatin1String("insert into ZdravstveniRadnik(imePrezime, id_odeljenja)"
+                                      "values(?,?)")))
+        {
+            qDebug() << "JMBG PROBLEM!!!";
+            return;
+        }
+        q.addBindValue(radnik);
+        q.addBindValue(idOdeljenja);
+        q.exec();
+    }
+    else {
+        return;
+    }
+}
+
+void dodajPruzenuUslugu(QSqlQuery &q, QString jmbg, int id_rad, int id_usl, QString datum, QString datum_brisanja)
+{
+    if(!q.prepare("insert into PruzeneUsluge(jmbg, id_radnika, id_usluge, datum_unosa, datum_brisanja) "
+                  "values(?,?,?,?,?)"))
+        qDebug() << "preuzeneUsluge PROBLEM!!!";
+    q.addBindValue(jmbg);
+    q.addBindValue(id_rad);
+    q.addBindValue(id_usl);
+    q.addBindValue(datum);
+    q.addBindValue(datum_brisanja);
+    q.exec();
+}
+
+int zdrOdeljenje(QSqlQuery &q, QString odeljenje)
+{
+    if(!q.prepare("select id_odeljenja from ZdravstvenaOdeljenja where naziv like ?"))
+        return -1;
+    q.addBindValue(odeljenje);
+    q.exec();
+    q.first();
+    return q.value(0).toInt();
+}
+
+void dodajZdrUslugu(QSqlQuery &q, const QString &usluga, QString odeljenje)
+{
+    int idOdeljenja = zdrOdeljenje(q, odeljenje);
+    if(!q.prepare(QLatin1String("insert into ZdravstvenaUsluga(naziv_usluge, id_odeljenja) values(?, ?)")))
     {
         qDebug() << "zdr_usl PROBLEM!!!";
         return;
     }
     q.addBindValue(usluga);
+    q.addBindValue(idOdeljenja);
     q.exec();
-}
-
-//void updateZdrUslugu(QSqlQuery &q, QString zdr_usl)
-//{
-//    pripremiZdrUslugu(q, zdr_usl);
-//    int id_usl = q.value(0).toInt();
-//    if (!q.prepare("select count(imePrezime) from ZdravstveniRadnik where id_usluge like ?"))
-//        return;
-//    q.addBindValue(id_usl);
-//    q.exec();
-//    q.first();
-//    int count_idUsl = q.value(0).toInt();
-//    if (!q.prepare("update ZdravstvenaUsluga set ukupnoUsluga like ? where naziv_usluge like ?"))
-//        return;
-//    q.addBindValue(count_idUsl);
-//    qDebug() << count_idUsl;
-//    q.addBindValue(zdr_usl);
-//    q.exec();
-//}
-
-
-QString dodajJmbg(QSqlQuery &q, QString jmbg)
-{
-    if(!q.prepare("SELECT jmbg from ZdravstveniRadnik where jmbg like ?"))
-        return NULL;
-    q.addBindValue(jmbg);
-    q.exec();
-    q.first();
-    return q.value(0).toString();
 }
 
 int nadjiIDusluge(QSqlQuery &q, QString zdr_usl)
@@ -75,40 +78,29 @@ int nadjiIDusluge(QSqlQuery &q, QString zdr_usl)
     return q.value(0).toInt();
 }
 
-QString nadjiOdeljenje(QSqlQuery &q, QString odeljenje)
+int nadjiOdeljenje(QSqlQuery &q, QString odeljenje)
 {
-    if(!q.prepare(QLatin1String("select naziv from ZdravstvenaOdeljenja where naziv like ?")))
-        return NULL;
+    if(!q.prepare(QLatin1String("select id_odeljenja from ZdravstvenaOdeljenja where naziv like ?")))
+        return -1;
     q.addBindValue(odeljenje);
     q.exec();
     q.first();
-    return q.value(0).toString();
+    return q.value(0).toInt();
 }
 
-void nadjiIDRadnika(QSqlQuery &q, QString zdr_rad)
+int nadjiIDRadnika(QSqlQuery &q, QString zdr_rad)
 {
     if (!q.prepare("select id_radnika from ZdravstveniRadnik where imePrezime like ?"))
-        return;
+        return -1;
     q.addBindValue(zdr_rad);
     q.exec();
     q.first();
-    qDebug() << q.value(0).toInt();
-    return;
-}
-
-void nadjiIdRadUsl(QSqlQuery &q, int idRad, int idUsl)
-{
-    if(!q.prepare("select naziv from ZdravstvenaOdeljenja where id_radnika like ? and id_usluge like ?"))
-        return;
-    q.addBindValue(idRad);
-    q.addBindValue(idUsl);
-    q.exec();
-    q.first();
-    return;
+    return q.value(0).toInt();
 }
 
 void dodajZdravstvenoOdeljenje(QSqlQuery &q, QString odeljenje)
 {
+    qDebug() << odeljenje;
     if (!q.prepare("insert into ZdravstvenaOdeljenja(naziv) values(?)"))
         return;
     q.addBindValue(odeljenje);
@@ -116,64 +108,164 @@ void dodajZdravstvenoOdeljenje(QSqlQuery &q, QString odeljenje)
     return;
 }
 
-int brojUsluga(QSqlQuery &query, int idUsluge)
+void dodajPacijenta(QSqlQuery &q, QString jmbg)
 {
-    if (!query.prepare("select count(imePrezime) from ZdravstveniRadnik where id_usluge like ?"))
-        return -1;
-    query.addBindValue(idUsluge);
-    query.exec();
-    query.first();
-    return query.value(0).toInt();
+    if (!q.prepare("insert into Pacijent(jmbg) values(?)"))
+        qDebug() << "tabela Pacijent PROBLEM!!!";
+    q.addBindValue(jmbg);
+    q.exec();
 }
 
-int brUslugaPoRadniku(QSqlQuery &q, QString radnik, int idUsluge)
+QString nadjiJmbg(QSqlQuery &q, QString jmbg)
 {
-    if(!q.prepare("select " + radnik + " from ZdravstvenaUsluga where id_usluge like ?"))
-        qDebug() << "brUslugaPoRadniku!!!!!!!!!!!";
-    q.addBindValue(idUsluge);
+    if (!q.prepare("select jmbg from Pacijent where jmbg like ?")) {
+        qDebug() << "GRESKAAAAA!!!";
+        return NULL;
+    }
+    q.addBindValue(jmbg);
+    q.exec();
+    q.first();
+    return q.value(0).toString();
+}
+
+void updateVremeBrisanje(QSqlQuery &q, QString jmbg, QString datum_brisanja)
+{
+    if (!q.prepare("update PruzeneUsluge set vreme_brisanja = ? where jmbg like ?"))
+        qDebug("Promena vremena!!!!");
+    q.addBindValue(datum_brisanja);
+    q.addBindValue(jmbg);
+    q.exec();
+}
+
+void mesecniIzvestaj(QSqlQuery &q, int id_rad, int id_usluge, int mesec, int broj_usluga)
+{
+    if (!q.prepare("insert into MesecniIzvestaj(id_radnika, id_usluge, mesec, broj_usluga) values(?,?,?,?)"))
+        qDebug() << "Unos u mesecni izvestaj PROBLEM!!!!";
+    q.addBindValue(id_rad);
+    q.addBindValue(id_usluge);
+    q.addBindValue(mesec);
+    q.addBindValue(broj_usluga);
+    q.exec();
+    qDebug() << "upisano u mesecni izvestaj";
+}
+
+int brojUsluga(QSqlQuery &q, int id_radnika, int id_usluge)
+{
+    if (!q.prepare("select broj_usluga from MesecniIzvestaj where id_radnika like ? and id_usluge like ?"))
+    {
+        qDebug() << "brojUsluge PROBLEM!!!";
+        return -1;
+    }
+    q.addBindValue(id_radnika);
+    q.addBindValue(id_usluge);
     q.exec();
     q.first();
     return q.value(0).toInt();
 }
 
-void dodajNovogRadnika(QSqlQuery &q, QString zdr_rad)
+void updateMesecniIzvestaj(QSqlQuery &q, int id_rad, int id_usluge, int mesec, int broj_usluga)
 {
-    bool ok = 1;
-    if(!q.prepare("pragma table_info(ZdravstvenaUsluga)")) {
-        qDebug() << "PRAGMA PROBLEM!!!";
+    if(!q.prepare("update MesecniIzvestaj set broj_usluga=? where id_radnika like ? and id_usluge like ?"))
+    {
+        qDebug() << "update MesecniIzvestaj PROBLEM";
         return;
     }
+    q.addBindValue(broj_usluga);
+    q.addBindValue(id_rad);
+    q.addBindValue(id_usluge);
     q.exec();
-    q.first();
-
-    while(q.next()) {
-        if (q.value(1).toString() == zdr_rad) {
-            qDebug() << q.value(1).toString();
-            ok = 0;
-        }
-        qDebug() << "ok =" << ok;
-    }
-
-    if (ok)
-        q.exec("alter table ZdravstvenaUsluga add " + zdr_rad + " integer");
 }
 
-void updateBrojUsluga(QSqlQuery &q, QString radnik, QString usluga)
+int getMonth(QSqlQuery &q)
 {
-    int idU = nadjiIDusluge(q, usluga);
-    if(!q.prepare("select count(imePrezime) from ZdravstveniRadnik where id_usluge like ? and imePrezime like ?")) {
-        qDebug() << "broj usluga po doktoru PROBLEM";
-        return;
+    if (!q.prepare("select mesec from MesecniIzvestaj")) {
+       qDebug() << "Izvlacenje meseca PROBLEM!!!!";
+       return -1;
     }
-    q.addBindValue(idU);
-    q.addBindValue(radnik);
     q.exec();
     q.first();
-    int brUsluga = q.value(0).toInt();
-    q.prepare("update ZdravstvenaUsluga set " + radnik + "=" + QString::number(brUsluga) + " where id_usluge like " + QString::number(idU));
-    if(!q.exec())
-         qDebug() << "FAILED!!!!!!!!!" << q.lastError();
-    else
-        qDebug() << "dobro je";
+    qDebug() << "upit mesec " << q.value(0).toInt();
+    return q.value(0).toInt();
+}
+
+int getYear(QSqlQuery &q)
+{
+    if (!q.prepare("select godina from GodisnjiIzvestaj")) {
+       qDebug() << "Izvlacenje godine PROBLEM!!!!";
+       return -1;
+    }
+    q.exec();
+    q.first();
+    qDebug() << "godina iz izvestaja " << q.value(0).toInt();
+    return q.value(0).toInt();
+}
+
+void godisnjiIzvestaj(QSqlQuery &q, int mesec, int godina, int radnik, int usluga, int br_usluga)
+{
+    if (!q.prepare("inser into GodisnjiIzvestaj(id_radnika, id_usluge, godina, " + QString::number(mesec) + ") values(?,?,?,?)"))
+    {
+        qDebug() << "unos u GodisnjiIzvestaj PROBLEM!!!!!!!!";
+        return;
+    }
+    q.addBindValue(radnik);
+    q.addBindValue(usluga);
+    q.addBindValue(godina);
+    q.addBindValue(br_usluga);
+    q.exec();
     return;
+}
+
+void resetMesecnogIzvestaja(QSqlQuery &q)
+{
+    if (!q.prepare("delete from MesecniIzvestaj"))
+        qDebug() << "brisanje MesecniIzvestaj PROBLEM";
+    q.exec();
+    return;
+}
+
+void resetGodisnjiIzvestaj(QSqlQuery &q)
+{
+    if (!q.prepare("delete from GodisnjiIzvestaj"))
+        qDebug() << "brisanje GodisnjiIzvestaj PROBLEM";
+    q.exec();
+    return;
+}
+
+QString nadjiRadnika(QSqlQuery &q, int id_radnika)
+{
+    if (!q.prepare("select imePrezime from ZdravstveniRadnik where id_radnika like ?"))
+    {
+        qDebug() << "izvlacenje imena i prezimena PROBLEM";
+        return NULL;
+    }
+    q.addBindValue(id_radnika);
+    q.exec();
+    q.first();
+    return q.value(0).toString();
+}
+
+int nadjiIDRadnikaIzvestaj(QSqlQuery &q, int id_radnika)
+{
+    if (!q.prepare("select id_radnika from MesecniIzvestaj where id_radnika like ?")) {
+        qDebug() << "id radnnika mesecni izvestaj PROBLEM";
+        return -1;
+    }
+    q.addBindValue(id_radnika);
+    q.exec();
+    q.first();
+    return q.value(0).toInt();
+
+}
+
+int nadjiIDuslugeIzvestaj(QSqlQuery &q, int id_usluge)
+{
+    if (!q.prepare("select id_usluge from MesecniIzvestaj where id_usluge like ?")) {
+        qDebug() << "id radnnika mesecni izvestaj PROBLEM";
+        return -1;
+    }
+    q.addBindValue(id_usluge);
+    q.exec();
+    q.first();
+    return q.value(0).toInt();
+
 }

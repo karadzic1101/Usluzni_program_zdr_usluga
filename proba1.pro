@@ -11,15 +11,23 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = proba1
 TEMPLATE = app
 
+win32:RC_ICONS += picture.ico
+QMAKE_LFLAGS += -static-libgcc
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     dialog.cpp \
-    database.cpp
+    database.cpp \
+    calendarform.cpp \
+    izvestajform.cpp
 
 HEADERS  += mainwindow.h \
     dialog.h \
-    database.h
+    database.h \
+    calendarform.h \
+    izvestajform.h
 
 FORMS    += mainwindow.ui \
-    dialog.ui
+    dialog.ui \
+    calendarform.ui \
+    izvestajform.ui

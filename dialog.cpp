@@ -1,9 +1,11 @@
 #include "dialog.h"
 #include "mainwindow.h"
 #include "ui_dialog.h"
+#include "iostream"
+
 #include <QTextStream>
 #include <QFile>
-#include "iostream"
+#include <QSqlQuery>
 #include <stdio.h>
 
 Dialog::Dialog(QWidget *parent) :
@@ -24,14 +26,13 @@ void Dialog::sendToMainWindow()
     QString usluga = m_ui->el_usluga->text();
     QString odeljenje = m_ui->el_odeljenje->text();
 
-    if(usluga != "")
-    {
-        lista_usluga.append(usluga);
-    }
-
     if(odeljenje != "")
     {
         lista_odeljenja.append(odeljenje);
+    }
+    if(usluga != "")
+    {
+        lista_usluga.append(usluga);
     }
 
     m_ui->el_usluga->setText("");

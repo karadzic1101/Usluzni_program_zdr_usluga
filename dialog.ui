@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>698</width>
-    <height>344</height>
+    <width>723</width>
+    <height>339</height>
    </rect>
   </property>
   <property name="font">
@@ -20,19 +20,11 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Novo zdravstveno odeljenje</string>
-     </property>
-    </widget>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="el_odeljenje"/>
    </item>
-   <item row="2" column="1">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="el_usluga"/>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label">
@@ -41,11 +33,19 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="el_usluga"/>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Novo zdravstveno odeljenje</string>
+     </property>
+    </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="el_odeljenje"/>
+   <item row="3" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
